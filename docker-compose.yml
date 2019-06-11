@@ -29,8 +29,6 @@ services:
     depends_on:
       - mysql
     environment:
-      WORDPRESS_VERSION: 5.2.1-ja
-      WORDPRESS_SHA1: a8cecc719fc14a8946e14d4dbc5618e3629a614c
       WORDPRESS_DB_HOST: mysql
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: password
@@ -52,4 +50,3 @@ volumes:
   mysql-data:
   wp-data:
 
-      
