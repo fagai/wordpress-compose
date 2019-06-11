@@ -1,0 +1,55 @@
+version: "3.7"
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy:alpine
+    ports: 
+      - "80:80"
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    volumes:
+      - wp-data:/var/www/html
+      - ./wp-content/:/var/www/html/wp-content
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - wordpress
+    environment:
+      - VIRTUAL_HOST=www.wordpress.localhost
+
+  wordpress:
+    image: wordpress:php7.3-fpm-alpine
+    restart: always
+    volumes: 
+      - wp-data:/var/www/html
+      - ./wp-content/:/var/www/html/wp-content
+    depends_on:
+      - mysql
+    environment:
+      WORDPRESS_VERSION: 5.2.1-ja
+      WORDPRESS_SHA1: a8cecc719fc14a8946e14d4dbc5618e3629a614c
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: password
+      WORDPRESS_DB_NAME: wordpress
+  
+  mysql:
+    image: mysql:8
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: password
+
+volumes:
+  mysql-data:
+  wp-data:
+
+      
